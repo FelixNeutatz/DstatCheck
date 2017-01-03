@@ -103,4 +103,30 @@ class experiments extends ApplicationContextAware {
       //@formatter:on
     )
   )
+
+  @Bean(name = Array("read"))
+  def `read`: ExperimentSuite = {
+    val `read` = new FlinkExperiment(
+      name    = "read",
+      command      =
+          s"""
+             |-v -c de.tu_berlin.dima.experiments.flink.broadcast.ReadJob \\
+             |-p $$((16 * $${env.slaves.all.total.hosts})) \\
+             |$${app.path.apps}/flink-broadcast-flink-jobs-1.0-SNAPSHOT.jar \\
+             |$$((16 * $${env.slaves.all.total.hosts})) \\
+             |${hdfsOutput("result").path} \\
+             |${hdfsOutput("result2").path}
+        """.stripMargin.trim,
+      config = no_format,
+      runs         = runs,
+      runner       = ctx.getBean("flink-1.0.3", classOf[Flink]),
+      systems      = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
+      inputs       = Set(hdfsOutput("result")),
+      outputs      = Set(hdfsOutput("result2"))
+    )
+
+    new ExperimentSuite(Seq(
+      `read`
+    ))
+  }
 }
