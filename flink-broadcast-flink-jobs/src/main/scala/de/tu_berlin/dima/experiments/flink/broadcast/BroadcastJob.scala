@@ -23,11 +23,10 @@ object BroadcastJob {
       System.exit(-1)
     }
 
-    val numMapTasks = args(0).toInt
     val vectorSizeInMB = args(1).toLong
     val outputPath = args(2)
 
-    val numVectorElements = vectorSizeInMB * BYTES_PER_MB / BYTES_PER_LONG
+    val numMapTasks = vectorSizeInMB * BYTES_PER_MB / BYTES_PER_LONG
 
     val env = ExecutionEnvironment.getExecutionEnvironment
 
@@ -38,12 +37,6 @@ object BroadcastJob {
       .setParallelism(numMapTasks)
       .name(s"Generate mapper dataset [1..$numMapTasks]")
 
-    // generate the broadcast DataSet
-    val vector: DataSet[Long] = env
-      .fromParallelCollection(new NumberSequenceIteratorWrapper(1, numVectorElements))
-      .setParallelism(1)
-      .name(s"Generate broadcast vector (${vectorSizeInMB}mb)")
-
     val result: DataSet[Long] = matrix.map(new RichMapFunction[Long, Long] {
       override def map(value: Long): Long = {
         value
@@ -52,6 +45,6 @@ object BroadcastJob {
 
     result.writeAsText(outputPath, WriteMode.OVERWRITE)
 
-    env.execute(s"Broadcast Job - dop: $numMapTasks, broadcast vector (mb): $vectorSizeInMB")
+    env.execute(s"dstat checker")
   }
 }
