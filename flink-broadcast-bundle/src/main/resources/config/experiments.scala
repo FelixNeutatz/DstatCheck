@@ -33,6 +33,14 @@ class experiments extends ApplicationContextAware {
 
   val runs = 1
 
+  //don't format hdfs after experiment / suite to keep the data set
+  val no_format = ConfigFactory.parseString(
+    s"""
+       |system.hadoop-2 {
+       |  format = false
+       |}
+         """.stripMargin)
+
   /* The enclosing application context. */
   var ctx: ApplicationContext = null
 
@@ -86,12 +94,7 @@ class experiments extends ApplicationContextAware {
            |78643200 \\
            |${hdfsOutput("result").path}
         """.stripMargin.trim,
-      config     = ConfigFactory.parseString(
-        s"""
-           |system.flink.config.yaml {
-           |  taskmanager.numberOfTaskSlots = ${numberOfTaskSlots}
-           |}
-         """.stripMargin),
+      config = no_format,
       runs         = runs,
       runner       = ctx.getBean("flink-1.0.3", classOf[Flink]),
       systems      = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
