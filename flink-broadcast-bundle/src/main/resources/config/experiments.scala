@@ -121,7 +121,7 @@ class experiments extends ApplicationContextAware {
       runs         = runs,
       runner       = ctx.getBean("flink-1.0.3", classOf[Flink]),
       systems      = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs       = Set(hdfsOutput("result")),
+      inputs       = Set.empty[DataSet],
       outputs      = Set(hdfsOutput("result2"))
     )
 
