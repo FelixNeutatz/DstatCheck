@@ -23,6 +23,7 @@ object BroadcastJob {
       System.exit(-1)
     }
 
+	val para = args(0).toInt
     val vectorSizeInMB = args(1).toLong
     val outputPath = args(2)
 
@@ -34,7 +35,7 @@ object BroadcastJob {
     // one number per task/dop
     val matrix: DataSet[Long] = env
       .fromParallelCollection(new NumberSequenceIteratorWrapper(1, numMapTasks))
-      .setParallelism(numMapTasks)
+      .setParallelism(para)
       .name(s"Generate mapper dataset [1..$numMapTasks]")
 
     val result: DataSet[Long] = matrix.map(new RichMapFunction[Long, Long] {
