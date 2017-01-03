@@ -91,7 +91,7 @@ class experiments extends ApplicationContextAware {
            |-p $$(($numberOfTaskSlots * $${env.slaves.all.total.hosts})) \\
            |$${app.path.apps}/flink-broadcast-flink-jobs-1.0-SNAPSHOT.jar \\
            |$$(($numberOfTaskSlots * $${env.slaves.all.total.hosts})) \\
-           |78643200 \\
+           |76800 \\
            |${hdfsOutput("result").path}
         """.stripMargin.trim,
       config = no_format,
